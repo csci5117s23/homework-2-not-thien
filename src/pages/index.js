@@ -2,10 +2,34 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const API_KEY = "6225f825-0088-4a86-a0aa-45ef26030cfa";
+  const API_ENDPOINT = "https://backendtest-rg8h.api.codehooks.io/dev/flashCard";
+
+  const [posts, setPosts] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(API_ENDPOINT, {
+        'method':'GET',
+        'headers': {'x-apikey': API_KEY}
+      })
+      const data = await response.json()
+      // update state -- configured earlier.
+      setPosts(data);
+      setLoading(false);
+    }
+    fetchData();
+  }, [])
+
+  if (loading) {
+    return (<span>LOADING...</span>);
+  } else {
   return (
     <>
       <Head>
@@ -19,6 +43,9 @@ export default function Home() {
           <p>
             Get started by editing&nbsp;
             <code className={styles.code}>src/pages/index.js</code>
+          </p>
+          <p>
+            {posts[0].front}
           </p>
           <div>
             <a
@@ -120,4 +147,5 @@ export default function Home() {
       </main>
     </>
   )
+}
 }
