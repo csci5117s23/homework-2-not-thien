@@ -5,6 +5,7 @@
 import { app } from "codehooks-js";
 import { crudlify } from "codehooks-crudlify";
 import { date, object, string, boolean } from "yup";
+import jwtDecode from 'jwt-decode';
 
 const todoYup = object({
   task: string().required(),
@@ -34,7 +35,7 @@ const userAuth = async (req, res, next) => {
 app.use(userAuth);
 
 // some extra logic for GET / and POST / requests.
-app.use("/poggers", (req, res, next) => {
+app.use("/todoItem", (req, res, next) => {
   if (req.method === "POST") {
     // always save authenticating user Id token.
     // note -- were not enforcing uniqueness which isn't great.

@@ -25,7 +25,7 @@ export default function Todos() {
     // const API_ENDPOINT = "https://5117hw2-03kx.api.codehooks.io/dev/todoItem";
 
     // Send the form data to our forms API on Vercel and get a response.
-    const response = await fetch(backend_base + "poggers", {
+    const response = await fetch(backend_base + "/todoItem", {
       'method': "POST",
       'headers': { 'Authorization': "Bearer " + token,
       'Content-Type': 'application/json'},
@@ -45,10 +45,10 @@ export default function Todos() {
 
   // Get todo items on mount & logged in
   useEffect(() => {
-    async function getTodos() {
+    const getTodos = async () => {
       if (userId) {
         const token = await getToken({ template: "codehooks" });
-        const result = await fetch(backend_base + "/poggers", {
+        const result = await fetch(backend_base + "/todoItem", {
           'method': "GET",
           'headers': { 'Authorization': "Bearer " + token }, // use the token.
         });
@@ -56,7 +56,7 @@ export default function Todos() {
         setTodoItems(data);
         setLoading(false);
       }
-    }
+    };
     getTodos();
   }, [isLoaded]);
 
