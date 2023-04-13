@@ -5,7 +5,7 @@
 */
 import {app} from 'codehooks-js'
 import {crudlify} from 'codehooks-crudlify'
-import { date, object, string } from 'yup';
+import { date, object, string, boolean } from 'yup';
 
 app.get("/test", (req, res) => {
     res.json({result: "you did it!"});
@@ -13,7 +13,7 @@ app.get("/test", (req, res) => {
 
 const todoYup = object({
     task: string().required(),
-    // done: boolean(), // OFFICE HOUR
+    done: boolean().default(false), 
     createdOn: date().default(() => new Date()),
 })
 
