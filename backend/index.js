@@ -2,7 +2,7 @@
  * Auto generated Codehooks (c) example
  * Install: npm i codehooks-js codehooks-crudlify
  */
-import { app } from "codehooks-js";
+import { app, Datastore } from "codehooks-js";
 import { crudlify } from "codehooks-crudlify";
 import { date, object, string, boolean } from "yup";
 import jwtDecode from 'jwt-decode';
@@ -10,11 +10,8 @@ import jwtDecode from 'jwt-decode';
 const todoYup = object({
   task: string().required(),
   done: boolean().default(false),
+  // userId: string().required(),
   createdOn: date().default(() => new Date()),
-});
-
-app.get("/test", (req, res) => {
-  res.json({ result: "you did it!" });
 });
 
 // This can largely be copy-pasted, it just grabs the authorization token and parses it, stashing it on the request.
@@ -47,6 +44,27 @@ app.use("/todoItem", (req, res, next) => {
     // on "index" -- always check for authentication.
     req.query.userId = req.user_token.sub;
   }
+  next();
+});
+
+app.use('/todoItem/:id', async (req, res, next) => {
+  const id = req.params.ID;
+  const userId = req.user_token.sub
+  // let's check access rights for the document being read/updated/replaced/deleted
+  const conn = await Datastore.open();
+  try {
+      const doc = await conn.getOne('todoItem', id)
+      if (doc.userId != userId) {
+          // authenticate duser doesn't own this document.
+          res.status(403).end(); // end is like "quit this request"
+          return
+      }
+  } catch (e) {
+      // the document doesn't exist.
+      res.status(404).end(e);
+      return;
+  }
+  // if we don't crash out -- call next and let crudlify deal with the details...
   next();
 });
 
