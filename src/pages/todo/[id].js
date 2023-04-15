@@ -10,6 +10,7 @@ function ToDoItemPage() {
   const [task, setTask] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [newTask, setNewTask] = useState("");
   const {id} = router.query;
   const { isLoaded, userId, sessionId, getToken } = useAuth();
   const backend_base = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
@@ -21,10 +22,10 @@ function ToDoItemPage() {
     const response = await fetch(backend_base + "/todoItem/" + id, {
       'method': "GET",
       'headers': { 'Authorization': "Bearer " + token},
-    });
-    const data = await response.json();
-
-    setTask(data);
+    })
+    .then(response => response.json()
+    .then(data => {setTask(data); setNewTask(data.task);}))
+    .catch(error => console.log(error));
     setIsLoading(false);
   };
 
@@ -35,23 +36,68 @@ function ToDoItemPage() {
   function handleCheck(event) {
     console.log("🚀 ~ file: [id].js:35 ~ handleCheck ~ handleCheck hit!");
     event.preventDefault();
-    // setIsChecked(true);
-    // taskDone(id);
+    setIsChecked(true);
+    taskDone(id);
   }
 
-    return (
-      <div>
-        {isLoading && <p>Loading...</p>}
-        {!isLoading && <>
-        <textarea value={task.task} />
-        <input name="checkDone" id="checkDone" type="checkbox" checked={isChecked} onChange={handleCheck} />
-        <button onclick="saveText()">Save</button>
-        <label htmlFor="checkDone">Completed?</label>
-        <Link href={`/todos/`}>Click here to go back!</Link>
-        </>}
-      </div>
-    );
+  const taskDone = async (taskId) => {
+    try{
+      const JSONdata = { "done": true };
+      const token = await getToken({ template: "codehooks" });
+      
+      // Send the form data to our forms API on Vercel and get a response.
+      const response = await fetch(backend_base + "/todoItem/" + taskId, {
+        'method': "PATCH",
+        'headers': { 'Authorization': "Bearer " + token,
+      'Content-Type': 'application/json'},
+      'body': JSON.stringify(JSONdata),
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: [id].js:54 ~ taskDone ~ data:", data)
+  } catch (error) {
+    console.log("🚀 ~ file: [id].js:57 ~ taskDone ~ error:", error)
   }
+}
+
+  function handleButton(event) {
+    console.log("🚀 ~ file: [id].js:61 ~ handleButton ~ event:", event)
+    event.preventDefault();
+    updateTask(id);
+  }
+
+  const updateTask = async (taskId) => {
+    try{
+      const JSONdata = { "task": newTask };
+      const token = await getToken({ template: "codehooks" });
+      
+      // Send the form data to our forms API on Vercel and get a response.
+      const response = await fetch(backend_base + "/todoItem/" + taskId, {
+        'method': "PATCH",
+        'headers': { 'Authorization': "Bearer " + token,
+      'Content-Type': 'application/json'},
+      'body': JSON.stringify(JSONdata),
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: [id].js:80 ~ updateTask ~ data:", data)
+  } catch (error) {
+  console.log("🚀 ~ file: [id].js:81 ~ updateTask ~ error:", error)
+  }
+}
+  
+  return (
+    <div>
+      {isLoading && <p>Loading...</p>}
+      {!isLoading && <>
+      <textarea value={newTask} onChange={(e) => setNewTask(e.target.value)} disabled={isChecked}/>
+      <button onClick={handleButton} disabled={isChecked}>Save</button>
+      <input name="checkDone" id="checkDone" type="checkbox" checked={isChecked} disabled={isChecked} onChange={handleCheck} />
+      <label htmlFor="checkDone">Completed?</label>
+      <Link href={`/todos/`}>Click here to go back!</Link>
+      </>}
+    </div>
+  );
+}
+
   
  
   export default ToDoItemPage;
