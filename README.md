@@ -15,6 +15,11 @@ Please fill out all of the following sections to help us grade your submission:
 
 ## Challenge Task
 
-* I started the challenge task: [yes/no]
-* I completed the challenge task: [yes/no]
+* I started the challenge task: **NO**
+* I completed the challenge task: **NO**
+
+## Notes to Grader: 
+currently, checkboxes are a little buggy and will be checked but don't appear as such. Also, after adding a new task, you have to wait a few seconds before clicking into the task. My code has issues with efficiently leveraging React states and efficiently updating the frontend.
+
+Also, sorry for the ugly CSS. 
 
