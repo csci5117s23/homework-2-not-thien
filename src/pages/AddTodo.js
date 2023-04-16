@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function AddToDo({ onAdd }) {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   function handleInputChange(event) {
     setInputValue(event.target.value);
@@ -11,19 +11,24 @@ export default function AddToDo({ onAdd }) {
     event.preventDefault();
     if (inputValue.trim()) {
       onAdd(inputValue);
-      setInputValue('');
+      setInputValue("");
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Enter a new to-do item"
-        value={inputValue}
-        onChange={handleInputChange}
-      />
-      <button type="submit">Add</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          type="text"
+          placeholder="Enter a new to-do item"
+          value={inputValue}
+          onChange={handleInputChange}
+          className="textarea"
+        />
+        <div>
+          <button type="submit">Add</button>
+        </div>
+      </form>
+    </div>
   );
 }

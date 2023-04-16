@@ -2,14 +2,7 @@ import Link from "next/link";
 import AddTodo from "./AddTodo.js";
 import TodoList from "./TodoList.js";
 import { useState, useEffect } from "react";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useAuth,
-} from "@clerk/nextjs";
+import { UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Todos() {
   const [todoItems, setTodoItems] = useState([]);
@@ -22,13 +15,13 @@ export default function Todos() {
     if (userId) {
       const token = await getToken({ template: "codehooks" });
       const result = await fetch(backend_base + "/todoItem", {
-        'method': "GET",
-        'headers': { 'Authorization': "Bearer " + token }, // use the token.
+        method: "GET",
+        headers: { Authorization: "Bearer " + token }, // use the token.
       });
       const data = await result.json();
 
       // will need to filter out the done tasks here
-      const filteredData = data.filter(item => item.done === false);
+      const filteredData = data.filter((item) => item.done === false);
 
       setTodoItems(filteredData);
       setLoading(false);
@@ -41,10 +34,12 @@ export default function Todos() {
 
     // Send the form data to our forms API on Vercel and get a response.
     const response = await fetch(backend_base + "/todoItem", {
-      'method': "POST",
-      'headers': { 'Authorization': "Bearer " + token,
-      'Content-Type': 'application/json'},
-      'body': JSON.stringify(JSONdata),
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(JSONdata),
     });
     const data = await response.json();
     const newID = data["_id"];
@@ -59,15 +54,17 @@ export default function Todos() {
   };
 
   const taskDone = async (taskId) => {
-    const JSONdata = { "done": true };
+    const JSONdata = { done: true };
     const token = await getToken({ template: "codehooks" });
 
     // Send the form data to our forms API on Vercel and get a response.
     const response = await fetch(backend_base + "/todoItem/" + taskId, {
-      'method': "PATCH",
-      'headers': { 'Authorization': "Bearer " + token,
-      'Content-Type': 'application/json'},
-      'body': JSON.stringify(JSONdata),
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(JSONdata),
     });
     const data = await response.json();
     setChanged(true);
@@ -83,13 +80,31 @@ export default function Todos() {
   return (
     <>
       <UserButton />
-      <h1>To Do List</h1>
-      <h2>
-        <Link href="/done">Go to done</Link>
-      </h2>
-      <AddTodo onAdd={postTodo} />
-      {loading && <p>Loading...</p>}
-      {!loading && <TodoList tasks={todoItems} handleCheck={taskDone} />}
+      <div>
+        <div className="center">
+          <h1>To Do List</h1>
+        </div>
+        <div className="center">
+          <Link href="/done" className="hover">
+            <h2>Go to done</h2>
+          </Link>
+        </div>
+        <div className="center">
+          <AddTodo onAdd={postTodo} />
+        </div>
+        {loading && (
+          <div className="center">
+            <p>Loading...</p>
+          </div>
+        )}
+        {!loading && (
+          <>
+            <div className="center grid">
+              <TodoList tasks={todoItems} handleCheck={taskDone} />
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 }
