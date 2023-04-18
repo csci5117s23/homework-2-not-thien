@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sync": "browser-sync start -p localhost:3000"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.16.2",
+    "browser-sync": "^2.29.1",
     "codehooks-crudlify": "^1.0.8",
     "codehooks-js": "^1.0.11",
     "jwt-decode": "^3.1.2",
